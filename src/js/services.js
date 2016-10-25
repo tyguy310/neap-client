@@ -3,14 +3,29 @@
   'use strict';
 
   angular
-  .module('myApp.services', [])
-  .service('CoffeeService', CoffeeService);
+    .module('myApp.services', [])
+    .service('coffeeService', coffeeService);
 
-  CoffeeService.$inject = ['$http'];
+  coffeeService.$inject = ['$http'];
 
-  function CoffeeService($http) {
+  function coffeeService($http) {
+    /*jshint validthis: true */
+    const baseURL = 'http://localhost:3000/coffee/';
     this.getAllCoffee = function() {
-      return $http.get('https://git.heroku.com/morning-oasis-72544.git3305f45..1def890');
+      return $http.get(baseURL);
+    };
+    this.getSingleCoffee = function(id) {
+      return $http.get(`${baseURL}${id}`);
+    };
+    this.addCoffee = function(coffee) {
+      return $http({
+        method: 'POST',
+        url: baseURL,
+        data: coffee,
+        headers: {'Content-Type': 'application/json'}
+      });
+      // return $http.post(baseURL, coffee);
     };
   }
+
 })();

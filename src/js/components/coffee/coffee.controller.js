@@ -6,14 +6,58 @@
     .module('myApp.components.coffee', [])
     .controller('coffeeController', coffeeController);
 
-  coffeeController.$inject = ['$scope', 'CoffeeService'];
+  coffeeController.$inject = ['$scope', 'coffeeService'];
 
-  function coffeeController($scope, CoffeeService) {
+  function coffeeController($scope, coffeeService) {
     /*jshint validthis: true */
-    this.greeting = 'Hello Coffee!';
-    CoffeeService.getAllCoffee()
-    .then(data => console.log(data))
-    .catch(err => console.log(err));
+    const vm = this;
+    vm.form = false;
+    vm.coffeeObj = init();
+    vm.showForm = function() {
+      vm.form = true;
+    };
+    vm.addCoffee = function() {
+      coffeeService.addCoffee(vm.coffeeObj)
+      .then(() => {
+        coffeeService.getAllCoffee()
+        .then((coffees) => {
+          vm.coffee = coffees.data.data;
+        })
+        .catch((err) => {
+          console.log(err); // handle this error
+        });
+        vm.coffeeObj = init();
+        vm.form = false;
+      });
+    };
+    coffeeService.getAllCoffee()
+    .then((coffees) => {
+      vm.coffee = coffees.data.data;
+    })
+    .catch((err) => {
+      console.log(err); // handle this error
+    });
+    // coffeeService.getSingleCoffee(1)
+    // .then((coffee) => {
+    //   console.log(coffee);
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
+  }
+
+  function init() {
+    const coffeeObj = {
+      name: 'Chrismas Blend',
+      roaster: 'Sweet Bloom',
+      origin: 'Derek\'s backyard',
+      roast: 'Medium',
+      caffeine: 22,
+      decaf: 'false',
+      price: 888888,
+      quantity: 1
+    };
+    return coffeeObj;
   }
 
 })();
